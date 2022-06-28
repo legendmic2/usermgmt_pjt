@@ -1,25 +1,30 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import RootStore from './stores/RootStore';
+import RootApi from './apis/RootApi';
+import AppContext from './app-context';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import Blog from './pages/blogTest/Blog';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 
-function App() {
+const store = new RootStore();
+const api = new RootApi(store);
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContext.Provider value={{store, api}}>
+            {window.localStorage.getItem("token") ? <Navigate replace to="/"/> : <Navigate replace to="/login"/>}
+            <Routes>
+                <Route path="/" element={<HomePage/>}/>
+                <Route path="/blog" element={<Blog/>}/>
+                <Route path="/login" element={<LoginPage/>}/>
+                <Route path="/signup" element={<SignUpPage/>}/>
+                <Route path="*" element={<Navigate replace to="/"/>}/>
+            </Routes>
+        </AppContext.Provider>
   );
 }
 
