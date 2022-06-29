@@ -28,7 +28,7 @@ function Copyright(props: any) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://github.com/legendmic2/buckethouse">
+      <Link color="inherit" href="https://github.com/legendmic2/usermgmt_pjt">
         User Management Project
       </Link>{" "}
       {new Date().getFullYear()}

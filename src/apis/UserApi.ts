@@ -7,6 +7,7 @@ import ILoginResult from "../types/LoginResult";
 import IResponseError, { IMessage } from "../types/ResponseError";
 import { setCookie } from "../utils/Cookie";
 import { CookieSetOptions } from "universal-cookie";
+import ILogoutData from "../types/LogoutData";
 
 export default class UserApi {
   constructor(private api: RootApi, private store: RootStore) {}
@@ -28,5 +29,18 @@ export default class UserApi {
     const res = await this.api.client.get(`/api/user`);
 
     this.store.user.loadLoginUserData(res.data);
+  }
+
+  async logout() {
+    await this.api.client
+      .post<ILogoutData | IResponseError>(`/api/logout`)
+      .then((res) => {
+        if ("lastConnectedAt" in res) {
+          return;
+        }
+      })
+      .catch((error) => {
+        return new Error(error.response.data.error.message);
+      });
   }
 }

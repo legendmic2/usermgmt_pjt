@@ -77,11 +77,7 @@ export const MainPage = observer(() => {
   const loginUserFetch = async () => {
     try {
       setLoading(true);
-      // const loginUserData =
       await api.user.loginUserGet();
-      // if ("lastConnectedAt" in loginUserData) {
-      //   store.user.loadLoginUserData(loginUserData);
-      // } else navigate("/");
     } finally {
       setLoading(false);
       if (!store.user.loginUserInfo) {
@@ -96,6 +92,7 @@ export const MainPage = observer(() => {
   useEffect(() => {
     // access token이 없을 경우엔 login page로 강제 routing
     if (!getCookie("accessToken")) {
+      alert("먼저 로그인 해주세요.");
       navigate("/login");
     } else loginUserFetch();
   }, []);

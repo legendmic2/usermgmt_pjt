@@ -8,6 +8,7 @@ import {
 import User from "../models/User";
 import RootStore from "./RootStore";
 import IUser, { emptyIUser, IUserForDisplay } from "../types/User";
+import { deleteCookie } from "../utils/Cookie";
 
 export default class UserStore {
   byId = observable.map<string, User>();
@@ -30,5 +31,10 @@ export default class UserStore {
       profileImage: this.loginUserInfo.profileImage,
       lastConnectedAt: this.loginUserInfo.lastConnectedAt.toDateString(),
     } as IUserForDisplay;
+  }
+
+  @action logoutProcess() {
+    this.loginUserInfo = emptyIUser;
+    deleteCookie("accessToken");
   }
 }
