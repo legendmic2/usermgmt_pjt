@@ -4,7 +4,7 @@ import IUser from "../types/User";
 import { AxiosError, AxiosResponse } from "axios";
 import ILoginData from "../types/LoginData";
 import ILoginResult from "../types/LoginResult";
-import { IMessage } from "../types/ResponseError";
+import IResponseError, { IMessage } from "../types/ResponseError";
 import { setCookie } from "../utils/Cookie";
 import { CookieSetOptions } from "universal-cookie";
 
@@ -13,14 +13,14 @@ export default class UserApi {
 
   async login(loginUser: ILoginData) {
     await this.api.client
-      .post<ILoginResult>(`/api/login`, loginUser)
+      .post<ILoginResult | IResponseError>(`/api/login`, loginUser)
       .then((res) => {
         if ("accessToken" in res.data) {
           setCookie("accessToken", res.data.accessToken);
-          // setCookie("accessToken", res.data.accessToken, {
-          //   httpOnly: true,
-          // } as CookieSetOptions);
         }
+      })
+      .catch((error) => {
+        throw new Error(error.response.data.error.message);
       });
   }
 

@@ -15,6 +15,7 @@ import Footer from "./Footer";
 import { observer } from "mobx-react-lite";
 import { useAppContext } from "../../app-context";
 import { Navigate, useNavigate } from "react-router-dom";
+import { getCookie } from "../../utils/Cookie";
 // import post1 from './blog-post.1.md';
 // import post2 from './blog-post.2.md';
 // import post3 from './blog-post.3.md';
@@ -93,7 +94,10 @@ export const MainPage = observer(() => {
   };
 
   useEffect(() => {
-    loginUserFetch();
+    // access token이 없을 경우엔 login page로 강제 routing
+    if (!getCookie("accessToken")) {
+      navigate("/login");
+    } else loginUserFetch();
   }, []);
 
   if (loading) {

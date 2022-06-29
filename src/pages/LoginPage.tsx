@@ -52,18 +52,28 @@ const LoginPage = observer(() => {
       password: data.get("password"),
     });
 
-    await login({
-      email: data.get("email"),
-      password: data.get("password"),
-    } as ILoginData).then(() => {
-      if (getCookie("accessToken")) {
-        navigate("/");
-      } else alert("로그인에 실패하였습니다.");
-    });
+    await api.user
+      .login({
+        email: data.get("email"),
+        password: data.get("password"),
+      } as ILoginData)
+      .then((result) => {
+        if (getCookie("accessToken")) {
+          navigate("/");
+        }
+      })
+      .catch((error: Error) => {
+        alert(error.message);
+      });
   };
 
   const login = async (loginUser: ILoginData) => {
-    return await api.user.login(loginUser);
+    await api.user.login(loginUser).then(
+      (result) => {},
+      (error) => {
+        if (error) alert(error);
+      }
+    );
   };
 
   return (
