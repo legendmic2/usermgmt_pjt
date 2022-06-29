@@ -1,20 +1,34 @@
-import { action, computed, makeObservable, observable } from "mobx";
+import {
+  action,
+  computed,
+  makeAutoObservable,
+  makeObservable,
+  observable,
+} from "mobx";
 import User from "../models/User";
 import RootStore from "./RootStore";
-import IUser from "../types/User";
+import IUser, { emptyIUser, IUserForDisplay } from "../types/User";
 
 export default class UserStore {
   byId = observable.map<string, User>();
+
+  loginUserInfo: IUser = emptyIUser;
 
   constructor(private store: RootStore) {
     makeObservable(this);
   }
 
-  @action load(users: IUser[]) {
-    users.forEach((it) => this.byId.set(it.name, new User(this.store, it)));
+  @action loadLoginUserData(loginUser: IUser) {
+    this.loginUserInfo = { ...loginUser } as IUser;
+    //new User(this.store, loginUser);
   }
 
-  @computed get all() {
-    return Array.from(this.byId.values());
+  @computed get loginUserForDisplay() {
+    return {
+      name: this.loginUserInfo.name,
+      email: this.loginUserInfo.email,
+      profileImage: this.loginUserInfo.profileImage,
+      lastConnectedAt: this.loginUserInfo.lastConnectedAt.toDateString(),
+    } as IUserForDisplay;
   }
 }

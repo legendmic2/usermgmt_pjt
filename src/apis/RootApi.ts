@@ -1,11 +1,13 @@
 import axios, { AxiosInstance } from "axios";
 import RootStore from "../stores/RootStore";
+import { axiosClient } from "../utils/UserMgmtAxios";
 import UserApi from "./UserApi";
 
 export default class RootApi {
-  client = axios.create({
-    baseURL: "https://ably-frontend-assignment-server.vercel.app",
-  });
+  client = axiosClient;
+  // axios.create({
+  //   baseURL: "https://ably-frontend-assignment-server.vercel.app",
+  // });
 
   user: UserApi;
 

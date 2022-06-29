@@ -12,16 +12,21 @@ export default class UserApi {
   constructor(private api: RootApi, private store: RootStore) {}
 
   async login(loginUser: ILoginData) {
-    const res = await this.api.client.post<
-      ILoginResult | AxiosError<IMessage, any>
-    >(`/auth/signin`, loginUser);
+    await this.api.client
+      .post<ILoginResult>(`/api/login`, loginUser)
+      .then((res) => {
+        if ("accessToken" in res.data) {
+          setCookie("accessToken", res.data.accessToken);
+          // setCookie("accessToken", res.data.accessToken, {
+          //   httpOnly: true,
+          // } as CookieSetOptions);
+        }
+      });
+  }
 
-    if ("accessToken" in res.data) {
-      setCookie("accessToken", res.data.accessToken, {
-        httpOnly: true,
-      } as CookieSetOptions);
+  async loginUserGet() {
+    const res = await this.api.client.get(`/api/user`);
 
-      return true;
-    } else return false;
+    this.store.user.loadLoginUserData(res.data);
   }
 }

@@ -17,6 +17,7 @@ import IUser from "../types/User";
 import { observer } from "mobx-react-lite";
 import ILoginData from "../types/LoginData";
 import { useNavigate } from "react-router-dom";
+import { getCookie } from "../utils/Cookie";
 
 function Copyright(props: any) {
   return (
@@ -51,14 +52,14 @@ const LoginPage = observer(() => {
       password: data.get("password"),
     });
 
-    const result = await login({
+    await login({
       email: data.get("email"),
       password: data.get("password"),
-    } as ILoginData);
-
-    if (result) {
-      navigate("/");
-    } else alert("로그인에 실패하였습니다.");
+    } as ILoginData).then(() => {
+      if (getCookie("accessToken")) {
+        navigate("/");
+      } else alert("로그인에 실패하였습니다.");
+    });
   };
 
   const login = async (loginUser: ILoginData) => {

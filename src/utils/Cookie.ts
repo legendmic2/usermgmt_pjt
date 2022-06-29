@@ -4,10 +4,10 @@ const cookies = new Cookies();
 
 export const setCookie = (
   name: string,
-  value: string,
-  option: CookieSetOptions
+  value: string
+  // ,option: CookieSetOptions
 ) => {
-  return cookies.set(name, value, { ...option });
+  return cookies.set(name, value); // , { ...option }
 };
 
 export const getCookie = (name: string) => {
