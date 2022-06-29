@@ -19,7 +19,15 @@ export default class UserStore {
 
   issueToken: string = "";
 
-  remainMillisecond: number = -1;
+  remainMillisecond: number = 0;
+
+  verifyingCode: string = "";
+
+  confirmToken: string = "";
+
+  newPassword: string = "";
+
+  confirmPassword: string = "";
 
   constructor(private store: RootStore) {
     makeObservable(this);
@@ -53,5 +61,25 @@ export default class UserStore {
 
   @action setRemainMillisecond(input: number) {
     this.remainMillisecond = input;
+  }
+
+  @action setVerifyingCode(input: string) {
+    this.verifyingCode = input;
+  }
+
+  @computed get leftMin() {
+    return Math.floor(this.remainMillisecond / 60000);
+  }
+
+  @computed get leftSec() {
+    return Math.floor((this.remainMillisecond % 60000) / 1000);
+  }
+
+  @action remainMillisecondDecrease() {
+    this.remainMillisecond -= 1000;
+  }
+
+  @action setConfirmToken(input: string) {
+    this.confirmToken = input;
   }
 }

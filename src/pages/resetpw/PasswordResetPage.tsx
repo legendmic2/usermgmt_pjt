@@ -13,10 +13,10 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import VerificationIssuaranceForm from "./VerificationIssuaranceForm";
-import PaymentForm from "./PaymentForm";
-import Review from "./Review";
+import VerifyingCodeForm from "./VerifyingCodeForm";
+import ChangePasswordPage from "./ChangePasswordPage";
 import { useAppContext } from "../../app-context";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 function Copyright() {
@@ -39,9 +39,9 @@ function getStepContent(step: number) {
     case 0:
       return <VerificationIssuaranceForm />;
     case 1:
-      return <PaymentForm />;
+      return <VerifyingCodeForm />;
     case 2:
-      return <Review />;
+      return <ChangePasswordPage />;
     default:
       throw new Error("Unknown step");
   }
@@ -74,14 +74,22 @@ const PasswordResetPage = observer(() => {
           .issueTokenGet(store.user.passwordResetEmail)
           .catch((error: Error) => {
             throw error;
-            // alert(error.message);
-            // return;
           });
         break;
       case 1:
-      // 인증코드 검증 => 인증코드 검증 API => 결과에 따라 이어서
+        // 인증코드 검증 => 인증코드 검증 API => 결과에 따라 이어서
+        await api.user
+          .codeVerify(store.user.issueToken)
+          .catch((error: Error) => {
+            throw error;
+          });
+        break;
       case 2:
-      // 새 비밀번호 & 비번확인 검증 => 비밀번호 변경 API 호출 => 결과에 따라 이어서
+        // 새 비밀번호 & 비번확인 검증 => 비밀번호 변경 API 호출 => 결과에 따라 이어서
+        await api.user.changePassword().catch((error: Error) => {
+          throw error;
+        });
+        break;
       default:
         throw new Error("unknown step");
     }
@@ -126,16 +134,7 @@ const PasswordResetPage = observer(() => {
           </Stepper>
           <React.Fragment>
             {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order
-                  confirmation, and will send you an update when your order has
-                  shipped.
-                </Typography>
-              </React.Fragment>
+              <Navigate replace to="/login" />
             ) : (
               <React.Fragment>
                 {getStepContent(activeStep)}

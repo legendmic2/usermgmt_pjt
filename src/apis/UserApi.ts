@@ -9,6 +9,10 @@ import { setCookie } from "../utils/Cookie";
 import { CookieSetOptions } from "universal-cookie";
 import ILogoutData from "../types/LogoutData";
 import IVerifyIssuaranceData from "../types/VerifyIssuaranceData";
+import IVerifyCodeData from "../types/VerifyCodeData";
+import IVerifyCodeResultData from "../types/VerifyCodeResultData";
+import IChangePasswordData from "../types/ChangePasswordData";
+import IChangePasswordResultData from "../types/ChangePasswordResultData";
 
 export default class UserApi {
   constructor(private api: RootApi, private store: RootStore) {}
@@ -51,6 +55,39 @@ export default class UserApi {
           this.store.user.setRemainMillisecond(res.data.remainMillisecond);
         }
       })
+      .catch((error) => {
+        throw new Error(error.response.data.error.message);
+      });
+  }
+
+  async codeVerify(code: string) {
+    await this.api.client
+      .post<IVerifyCodeResultData | IResponseError>(`/api/reset-password`, {
+        email: this.store.user.passwordResetEmail,
+        authCode: code,
+        issueToken: this.store.user.issueToken,
+      } as IVerifyCodeData)
+      .then((res) => {
+        if ("confirmToken" in res.data) {
+          this.store.user.setConfirmToken(res.data.confirmToken);
+        }
+      })
+      .catch((error) => {
+        throw new Error(error.response.data.error.message);
+      });
+  }
+
+  async changePassword() {
+    await this.api.client
+      .patch<IChangePasswordResultData | IResponseError>(
+        `/api/reset-password`,
+        {
+          email: this.store.user.passwordResetEmail,
+          confirmToken: this.store.user.confirmToken,
+          newPassword: this.store.user.newPassword,
+          newPasswordconfirm: this.store.user.confirmPassword,
+        } as IChangePasswordData
+      )
       .catch((error) => {
         throw new Error(error.response.data.error.message);
       });
