@@ -10,6 +10,7 @@ import MainPage from "./pages/main/MainPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import { getCookie } from "./utils/Cookie";
+import PasswordResetPage from "./pages/resetpw/PasswordResetPage";
 
 const store = new RootStore();
 const api = new RootApi(store);
@@ -27,6 +28,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/resetpw" element={<PasswordResetPage />} />
         {/* <Route path="/signup" element={<SignUpPage/>}/> */}
         <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>

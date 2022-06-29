@@ -15,13 +15,18 @@ export default class UserStore {
 
   loginUserInfo: IUser = emptyIUser;
 
+  passwordResetEmail: string = "";
+
+  issueToken: string = "";
+
+  remainMillisecond: number = -1;
+
   constructor(private store: RootStore) {
     makeObservable(this);
   }
 
   @action loadLoginUserData(loginUser: IUser) {
     this.loginUserInfo = { ...loginUser } as IUser;
-    //new User(this.store, loginUser);
   }
 
   @computed get loginUserForDisplay() {
@@ -36,5 +41,17 @@ export default class UserStore {
   @action logoutProcess() {
     this.loginUserInfo = emptyIUser;
     deleteCookie("accessToken");
+  }
+
+  @action setPasswordResetEmail(input: string) {
+    this.passwordResetEmail = input;
+  }
+
+  @action setIssueToken(input: string) {
+    this.issueToken = input;
+  }
+
+  @action setRemainMillisecond(input: number) {
+    this.remainMillisecond = input;
   }
 }

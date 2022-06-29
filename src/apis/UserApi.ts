@@ -8,6 +8,7 @@ import IResponseError, { IMessage } from "../types/ResponseError";
 import { setCookie } from "../utils/Cookie";
 import { CookieSetOptions } from "universal-cookie";
 import ILogoutData from "../types/LogoutData";
+import IVerifyIssuaranceData from "../types/VerifyIssuaranceData";
 
 export default class UserApi {
   constructor(private api: RootApi, private store: RootStore) {}
@@ -34,13 +35,24 @@ export default class UserApi {
   async logout() {
     await this.api.client
       .post<ILogoutData | IResponseError>(`/api/logout`)
+      .catch((error) => {
+        throw new Error(error.response.data.error.message);
+      });
+  }
+
+  async issueTokenGet(email: string) {
+    await this.api.client
+      .get<IVerifyIssuaranceData | IResponseError>(
+        `/api/reset-password?email=${email}`
+      )
       .then((res) => {
-        if ("lastConnectedAt" in res) {
-          return;
+        if ("issueToken" in res.data && "remainMillisecond" in res.data) {
+          this.store.user.setIssueToken(res.data.issueToken);
+          this.store.user.setRemainMillisecond(res.data.remainMillisecond);
         }
       })
       .catch((error) => {
-        return new Error(error.response.data.error.message);
+        throw new Error(error.response.data.error.message);
       });
   }
 }
